@@ -1,22 +1,18 @@
 FROM python:3.11
 
-# Set working directory inside container
-WORKDIR /app
+# Install distutils (required by Django 3.2)
+RUN apt-get update && apt-get install -y python3-distutils
 
-# Copy all files into container
+# Install Django
+RUN pip install django==3.2
+
+# Copy application code
 COPY . .
 
-# Install dependencies
-RUN pip install --upgrade pip \
-    && pip install -r requirements.txt || pip install django==3.2
-
-# Run DB migrations
+# Run migrations
 RUN python manage.py migrate
 
-# Expose port 8000
 EXPOSE 8000
 
-# Run the server
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-
 
